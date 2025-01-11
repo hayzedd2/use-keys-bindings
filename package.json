@@ -1,0 +1,24 @@
+{
+  "name": "use-keys-bindings",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "keyboard",
+    "shortcut",
+    "keybindings"
+  ],
+  "author": "Alhameen",
+  "license": "ISC",
+  "description": "A custom hook for handling keyboard shortcuts in React apps.",
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.3"
+  }
+}
