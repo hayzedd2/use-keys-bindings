@@ -27,6 +27,9 @@ export const useKeys = ({
 }: useKeysProp) => {
   // Memoized the keys Set to avoid recreating it on every render
   const keysSet = useMemo(() => new Set(keys), [keys]);
+  if (keysSet.size == 0){
+    throw new Error('useKeys: keys array cannot be empty');
+  }
 
   const memoizedCallback = useCallback(callback, [callback]);
   const pressedKeys = useRef<Set<string>>(new Set());
@@ -39,7 +42,8 @@ export const useKeys = ({
     };
 
     const checkKeys = (): boolean => {
-    //   const exactMatch = pressedKeys.current.size == keys.length;
+      const exactMatch = pressedKeys.current.size == keys.length;
+
       if (triggerOnAnyKey) {
         return Array.from(keysSet).some((key) =>
           pressedKeys.current.has(key.toLowerCase())
