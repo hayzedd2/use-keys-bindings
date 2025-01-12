@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Key } from "./types";
+import { useEffect, useMemo, useRef } from "react";
+import { Key, KeyModifier } from "./types";
 
-type KeyModifier = "ctrlKey" | "shiftKey" | "altKey" | "metaKey";
-interface useKeysProp {
+interface useKeysCommand {
   keys: Key[];
   callback: (e: KeyboardEvent) => void;
   triggerOnAnyKey?: boolean;
@@ -18,63 +17,69 @@ interface useKeysProp {
  * @param preventDefault - If set to true, disables the browser default behaviour for that key
  */
 
-export const useKeys = ({
-  keys,
-  callback,
-  modifiers = {},
-  triggerOnAnyKey,
-  preventDefault,
-}: useKeysProp) => {
-  // Memoized the keys Set to avoid recreating it on every render
-  const keysSet = useMemo(() => new Set(keys), [keys]);
-  if (keysSet.size == 0){
-    throw new Error('useKeys: keys array cannot be empty');
+export const useKeys = (...commands: useKeysCommand[]) => {
+  if (commands.some((cmd) => cmd.keys.length === 0)) {
+    throw new Error("Empty keys array is not allowed");
   }
+  // convert all keys array in commands to sets for faster lookup, basically an array of sets
+  const keySets = useMemo(
+    () => commands.map((command) => new Set(command.keys)),
+    [commands]
+  );
+  // an array of the callbacks of each commands, -- storing it separately
+  const commandCallbacks = useMemo(
+    () => commands.map((command) => command.callback),
+    [commands]
+  );
 
-  const memoizedCallback = useCallback(callback, [callback]);
+  //   state to track pressed keys, use ref to maintain state between renders without causing rerenders
   const pressedKeys = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    const checkModifiers = (e: KeyboardEvent): boolean => {
+    const checkModifiers = (
+      e: KeyboardEvent,
+      modifiers?: Partial<Record<KeyModifier, boolean>>
+    ): boolean => {
+      if (!modifiers || Object.keys(modifiers).length === 0) {
+        return true; // If no modifiers specified, return true
+      }
       return Object.entries(modifiers).every(
         ([modifier, required]) => required === e[modifier as KeyModifier]
       );
     };
 
-    const checkKeys = (): boolean => {
-      const exactMatch = pressedKeys.current.size == keys.length;
-
+    const checkKeys = (keySet: Set<Key>, triggerOnAnyKey = false): boolean => {
       if (triggerOnAnyKey) {
-        return Array.from(keysSet).some((key) =>
-          pressedKeys.current.has(key.toLowerCase())
-        );
+        // [a,b,c,d] for keyset pressing only a would return true
+        return Array.from(keySet).some((key) => pressedKeys.current.has(key));
       }
-      return Array.from(keysSet).every((key) =>
-        pressedKeys.current.has(key.toLowerCase())
-      );
+      // [a,b,c,d] for keyset,pressing only a would return false, all a,b,c,d has to be pressed to return true
+      return Array.from(keySet).every((key) => pressedKeys.current.has(key));
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase();
-
-      if (keysSet.has(key as Key) && preventDefault) {
-        e.preventDefault();
-      }
-
-      if (!pressedKeys.current.has(key)) {
-        pressedKeys.current.add(key);
+      if (!pressedKeys.current.has(e.key)) {
+        pressedKeys.current.add(e.key);
         console.log(pressedKeys.current);
-        if (checkKeys() && checkModifiers(e)) {
-          memoizedCallback(e);
-        }
+        commands.forEach((command, index) => {
+          // command is each object specified in the hook
+          if (command.preventDefault && keySets[index].has(e.key as Key)) {
+            e.preventDefault();
+          }
+          if (
+            checkKeys(keySets[index], command.triggerOnAnyKey) &&
+            checkModifiers(e, command.modifiers)
+          ) {
+            commandCallbacks[index](e);
+          }
+        });
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      pressedKeys.current.delete(e.key.toLowerCase());
+      pressedKeys.current.delete(e.key);
     };
 
-    // Handle edge cases where keyup might be missed
     const handleBlur = () => {
       pressedKeys.current.clear();
     };
@@ -89,5 +94,5 @@ export const useKeys = ({
       window.removeEventListener("blur", handleBlur);
       pressedKeys.current.clear();
     };
-  }, [keysSet, memoizedCallback, modifiers, triggerOnAnyKey, preventDefault]);
+  }, [commands, keySets, commandCallbacks]);
 };

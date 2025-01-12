@@ -1,3 +1,6 @@
+
+export type KeyModifier = "ctrlKey" | "shiftKey" | "altKey" | "metaKey";
+
 export type Key =
   // Navigation
   | "ArrowUp"
@@ -8,8 +11,6 @@ export type Key =
   | "End"
   | "PageUp"
   | "PageDown"
-
-  | "Alt" | "AltGraph" | "Control" | "Meta" | "Shift"
 
   // Function keys
   | "F1"

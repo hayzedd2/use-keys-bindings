@@ -17,6 +17,10 @@
   "author": "Alhameen",
   "license": "ISC",
   "description": "A custom hook for handling keyboard shortcuts in React apps.",
+  "repository": {
+    "url": "https://github.com/hayzedd2/use-keys-bindings"
+  },
+  "homepage": "https://github.com/hayzedd2/use-keys-bindings",
   "devDependencies": {
     "tsup": "^8.3.5",
     "typescript": "^5.7.3"
