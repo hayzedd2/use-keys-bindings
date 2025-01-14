@@ -40,7 +40,7 @@ const App = () => {
     },
   });
 
-  return <div>Press Arrow Keys!</div>;
+  return <div>Press Arrow Keys!, triggerOnAnyKey is making it possible to do conditional checks in the callback</div>;
 };
 
 export default App;
@@ -56,11 +56,11 @@ const App = () => {
   useKeys({
     keys: ["s"],
     modifiers: {
-      ctrlKey: true,
+      Control: true,
     },
     preventDefault: true,
     callback: () => {
-      console.log("Saved!");
+      saveDocument()
     },
   });
 
@@ -82,7 +82,7 @@ export default App;
 |-------------------|-------------------------------------------|----------|---------|--------------------------------------------------------------------------------------------------|
 | `keys`            | `Key[]`                                  | Yes      | —       | An array of keys to listen for (e.g., `["ArrowRight", "s"]`).                                   |
 | `callback`        | `(e: KeyboardEvent) => void`             | Yes      | —       | The function to call when the keys are pressed.                                                  |
-| `triggerOnAnyKey` | `boolean`                                | No       | `false` | If `true`, the callback will be triggered if any one of the keys is pressed.                     |
+| `triggerOnAnyKey` | `boolean`                                | No       | `false` | If `true`, the callback will be triggered if any one of the keys is pressed, useful for doing conditional checks in cakkback.                     |
 | `modifiers`       | `Partial<Record<KeyModifier, boolean>>`  | No       | —       | An object specifying required modifier keys (e.g., `{ Control: true, Shift: true }`).          |
 | `preventDefault`  | `boolean`                                | No       | `false` | Prevents the browser's default behavior for the specified keys.                                  |
 
