@@ -83,16 +83,16 @@ export default App;
 | `keys`            | `Key[]`                                  | Yes      | —       | An array of keys to listen for (e.g., `["ArrowRight", "s"]`).                                   |
 | `callback`        | `(e: KeyboardEvent) => void`             | Yes      | —       | The function to call when the keys are pressed.                                                  |
 | `triggerOnAnyKey` | `boolean`                                | No       | `false` | If `true`, the callback will be triggered if any one of the keys is pressed.                     |
-| `modifiers`       | `Partial<Record<KeyModifier, boolean>>`  | No       | —       | An object specifying required modifier keys (e.g., `{ ctrlKey: true, shiftKey: true }`).          |
+| `modifiers`       | `Partial<Record<KeyModifier, boolean>>`  | No       | —       | An object specifying required modifier keys (e.g., `{ Control: true, Shift: true }`).          |
 | `preventDefault`  | `boolean`                                | No       | `false` | Prevents the browser's default behavior for the specified keys.                                  |
 
 ### Key Modifiers
 
 The `modifiers` object can include:
-- `ctrlKey`
-- `shiftKey`
-- `altKey`
-- `metaKey`
+- `Control`
+- `Shift`
+- `Alt`
+- `Meta`
 
 ## Best Practices
 
