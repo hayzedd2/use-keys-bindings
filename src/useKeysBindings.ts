@@ -9,14 +9,6 @@ interface useKeysCommand {
   preventDefault?: boolean;
 }
 
-/**
- * A React hook for handling keyboard shortcuts
- * @param keys - Array of keys to listen for
- * @param callback - Function to call when keys are pressed
- * @param triggerOnAnyKey - If true, triggers on any key in the array. If false, requires all keys
- * @param modifiers - Object specifying which modifier keys (ctrl, shift, alt, meta) should be pressed
- * @param preventDefault - If set to true, disables the browser default behaviour for that key
- */
 
 class LowercaseSet extends Set<string> {
   add(value: string) {
@@ -53,6 +45,14 @@ const checkKeys = (
   return Array.from(keySet).every((key) => pressedKeys.has(key));
 };
 
+/**
+ * A React hook for handling keyboard shortcuts
+ * @param keys - Array of keys to listen for
+ * @param callback - Function to call when keys are pressed
+ * @param triggerOnAnyKey - If true, triggers on any key in the array. If false, requires all keys
+ * @param modifiers - Object specifying which modifier keys (ctrl, shift, alt, meta) should be pressed
+ * @param preventDefault - If set to true, disables the browser default behaviour for that key
+ */
 export const useKeys = (...commands: useKeysCommand[]) => {
   if (commands.some((cmd) => cmd.keys.length === 0)) {
     throw new Error("Empty keys array is not allowed");

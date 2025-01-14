@@ -1,5 +1,5 @@
 
-export type KeyModifier = "ctrlKey" | "shiftKey" | "altKey" | "metaKey";
+export type KeyModifier = "Control" | "Alt" | "Shift" | "Meta";
 
 export type Key =
   // Navigation
@@ -60,32 +60,6 @@ export type Key =
   | "x"
   | "y"
   | "z"
-  | "A"
-  | "B"
-  | "C"
-  | "D"
-  | "E"
-  | "F"
-  | "G"
-  | "H"
-  | "I"
-  | "J"
-  | "K"
-  | "L"
-  | "M"
-  | "N"
-  | "O"
-  | "P"
-  | "Q"
-  | "R"
-  | "S"
-  | "T"
-  | "U"
-  | "V"
-  | "W"
-  | "X"
-  | "Y"
-  | "Z"
   // Numbers
   | "0"
   | "1"
