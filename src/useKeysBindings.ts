@@ -54,7 +54,7 @@ const checkKeys = (
  * @param preventDefault - If set to true, disables the browser default behaviour for that key
  * @param enableKeyRepeatOnHold When true, allows the callback to trigger repeatedly while holding the key down.
  * Useful for continuous movement in games or similar interactions.
- */
+ */ 
 export const useKeys = (...commands: useKeysCommand[]) => {
   if (commands.some((cmd) => cmd.keys.length === 0)) {
     throw new Error("Empty keys array is not allowed");
