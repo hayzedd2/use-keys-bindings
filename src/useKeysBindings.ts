@@ -7,8 +7,8 @@ interface useKeysCommand {
   triggerOnAnyKey?: boolean;
   modifiers?: Partial<Record<KeyModifier, boolean>>;
   preventDefault?: boolean;
+  enableKeyRepeatOnHold?: boolean;
 }
-
 
 class LowercaseSet extends Set<string> {
   add(value: string) {
@@ -52,6 +52,8 @@ const checkKeys = (
  * @param triggerOnAnyKey - If true, triggers on any key in the array. If false, requires all keys
  * @param modifiers - Object specifying which modifier keys (ctrl, shift, alt, meta) should be pressed
  * @param preventDefault - If set to true, disables the browser default behaviour for that key
+ * @param enableKeyRepeatOnHold When true, allows the callback to trigger repeatedly while holding the key down.
+ * Useful for continuous movement in games or similar interactions.
  */
 export const useKeys = (...commands: useKeysCommand[]) => {
   if (commands.some((cmd) => cmd.keys.length === 0)) {
@@ -69,15 +71,20 @@ export const useKeys = (...commands: useKeysCommand[]) => {
   const pressedKeys = useRef<Set<string>>(new LowercaseSet());
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (pressedKeys.current.has(e.key)) return;
-    pressedKeys.current.add(e.key);
-
     for (let i = 0; i < commands.length; i++) {
       const command = commands[i];
       const keySet = keySets[i];
+      const allowRepeat = command.enableKeyRepeatOnHold ?? false;
 
       if (command.preventDefault && keySet.has(e.key as Key)) {
         e.preventDefault();
+      }
+      if (pressedKeys.current.has(e.key)) {
+        if (!allowRepeat && e.repeat) {
+          return; // Don't trigger the callback if repeat is not allowed
+        }
+      } else {
+        pressedKeys.current.add(e.key);
       }
 
       if (!checkModifiers(pressedKeys.current, command.modifiers)) continue;
